@@ -1,6 +1,7 @@
 import { Test } from 'tape'
 
 import { DPT, ETH, RLPx, genPrivateKey } from '../../src'
+import Common from 'ethereumjs-common'
 
 export const localhost = '127.0.0.1'
 export const basePort = 30306
@@ -34,10 +35,18 @@ export function destroyDPTs(dpts: any) {
   for (let dpt of dpts) dpt.destroy()
 }
 
-export function getTestRLPXs(numRLPXs: any, maxPeers: any, capabilities: any) {
+export function getTestRLPXs(
+  numRLPXs: number,
+  maxPeers: number = 10,
+  capabilities?: any,
+  common?: Object | Common,
+) {
   const rlpxs = []
   if (!capabilities) {
     capabilities = [ETH.eth63, ETH.eth62]
+  }
+  if (!common) {
+    common = new Common('mainnet')
   }
   const dpts = getTestDPTs(numRLPXs)
 
@@ -46,6 +55,7 @@ export function getTestRLPXs(numRLPXs: any, maxPeers: any, capabilities: any) {
       dpt: dpts[i],
       maxPeers: maxPeers,
       capabilities: capabilities,
+      common: common.constructor === Array ? common[i] : (common as Common),
       listenPort: basePort + i,
     })
     rlpx.listen(basePort + i)
@@ -54,8 +64,8 @@ export function getTestRLPXs(numRLPXs: any, maxPeers: any, capabilities: any) {
   return rlpxs
 }
 
-export function initTwoPeerRLPXSetup(maxPeers: any, capabilities: any) {
-  const rlpxs = getTestRLPXs(2, maxPeers, capabilities)
+export function initTwoPeerRLPXSetup(maxPeers?: any, capabilities?: any, common?: Object | Common) {
+  const rlpxs = getTestRLPXs(2, maxPeers, capabilities, common)
   const peer = { address: localhost, udpPort: basePort + 1, tcpPort: basePort + 1 }
   rlpxs[0]._dpt.addPeer(peer)
   return rlpxs
@@ -73,8 +83,13 @@ export function initTwoPeerRLPXSetup(maxPeers: any, capabilities: any) {
  * @param {Function} opts.onOnMsg0 (rlpxs, protocol, code, payload) Optional handler function
  * @param {Function} opts.onOnMsg1 (rlpxs, protocol, code, payload) Optional handler function
  */
-export function twoPeerMsgExchange(t: Test, capabilities: any, opts: any) {
-  const rlpxs = initTwoPeerRLPXSetup(null, capabilities)
+export function twoPeerMsgExchange(
+  t: Test,
+  opts: any,
+  capabilities?: any,
+  common?: Object | Common,
+) {
+  const rlpxs = initTwoPeerRLPXSetup(null, capabilities, common)
   rlpxs[0].on('peer:added', function(peer: any) {
     const protocol = peer.getProtocols()[0]
     protocol.sendStatus(opts.status0) // (1 ->)

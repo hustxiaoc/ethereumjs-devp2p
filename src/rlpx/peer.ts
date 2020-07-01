@@ -1,13 +1,14 @@
-import { EventEmitter } from 'events'
-import rlp from 'rlp-encoding'
-import * as util from '../util'
 import BufferList from 'bl'
-import ms from 'ms'
 import { debug as createDebugLogger } from 'debug'
-import { int2buffer, buffer2int, formatLogData } from '../util'
+import { EventEmitter } from 'events'
+import ms from 'ms'
+import rlp from 'rlp-encoding'
+import Common from 'ethereumjs-common'
 import { ECIES } from './ecies'
-import { Socket } from 'net'
 import { ETH, LES } from '../'
+import { int2buffer, buffer2int, formatLogData } from '../util'
+import { Socket } from 'net'
+import * as util from '../util'
 
 const debug = createDebugLogger('devp2p:rlpx:peer')
 const verbose = createDebugLogger('verbose').enabled
@@ -77,6 +78,7 @@ export interface Hello {
 export class Peer extends EventEmitter {
   _clientId: Buffer
   _capabilities?: Capabilities[]
+  _common: Common
   _port: number
   _id: Buffer
   _remoteClientIdFilter: any
@@ -104,6 +106,7 @@ export class Peer extends EventEmitter {
     // hello data
     this._clientId = options.clientId
     this._capabilities = options.capabilities
+    this._common = options.common
     this._port = options.port
     this._id = options.id
     this._remoteClientIdFilter = options.remoteClientIdFilter

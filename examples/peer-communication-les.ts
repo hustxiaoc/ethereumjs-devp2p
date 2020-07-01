@@ -11,7 +11,6 @@ type Header = Block.Header
 
 const PRIVATE_KEY = randomBytes(32)
 
-const CHAIN_ID = 4 // Rinkeby
 const GENESIS_TD = 1
 const GENESIS_HASH = Buffer.from(
   '6341fd3daf94b748c72ced5a5b26028f2474f5f00d824504e4fa37a75767e177',
@@ -19,19 +18,15 @@ const GENESIS_HASH = Buffer.from(
 )
 
 const Common = require('ethereumjs-common').default
-const config = new Common('mainnet')
-const bootstrapNodes = config.bootstrapNodes()
-const BOOTNODES = bootstrapNodes
-  .filter((node: any) => {
-    return node.chainId === CHAIN_ID
-  })
-  .map((node: any) => {
-    return {
-      address: node.ip,
-      udpPort: node.port,
-      tcpPort: node.port,
-    }
-  })
+const common = new Common('rinkeby')
+const bootstrapNodes = common.bootstrapNodes()
+const BOOTNODES = bootstrapNodes.map((node: any) => {
+  return {
+    address: node.ip,
+    udpPort: node.port,
+    tcpPort: node.port,
+  }
+})
 const REMOTE_CLIENTID_FILTER = [
   'go1.5',
   'go1.6',
@@ -64,6 +59,7 @@ const rlpx = new devp2p.RLPx(PRIVATE_KEY, {
   dpt: dpt,
   maxPeers: 25,
   capabilities: [devp2p.LES.les2],
+  common: common,
   remoteClientIdFilter: REMOTE_CLIENTID_FILTER,
   listenPort: null,
 })
@@ -83,7 +79,6 @@ rlpx.on('peer:added', peer => {
   )
 
   les.sendStatus({
-    networkId: CHAIN_ID,
     headTd: devp2p.int2buffer(GENESIS_TD),
     headHash: GENESIS_HASH,
     headNum: Buffer.from([]),

@@ -142,17 +142,22 @@ Connect to a peer, organize the communication, see [./src/rlpx/](./src/rlpx/)
 
 ### Usage
 
+Instantiate an [ethereumjs-common](https://github.com/ethereumjs/ethereumjs-vm/tree/master/packages/common)
+instance with the network you want to connect to:
+
+```typescript
+const common = new Common('mainnet')
+```
+
 Create your `RLPx` object, e.g.:
 
-```
+```typescript
 const rlpx = new devp2p.RLPx(PRIVATE_KEY, {
   dpt: dpt,
   maxPeers: 25,
-  capabilities: [
-    devp2p.ETH.eth63,
-    devp2p.ETH.eth62
-  ],
-  listenPort: null
+  capabilities: [devp2p.ETH.eth63, devp2p.ETH.eth62],
+  common: common,
+  listenPort: null,
 })
 ```
 
@@ -248,7 +253,7 @@ Normally not instantiated directly but created as a `SubProtocol` in the `Peer` 
 
 Send initial status message.
 
-- `status` - Status message to send, format `{ networkId: CHAIN_ID, td: TOTAL_DIFFICULTY_BUFFER, bestHash: BEST_HASH_BUFFER, genesisHash: GENESIS_HASH_BUFFER }`.
+- `status` - Status message to send, format `{td: TOTAL_DIFFICULTY_BUFFER, bestHash: BEST_HASH_BUFFER, genesisHash: GENESIS_HASH_BUFFER }`, `networkId` (respectively `chainId`) is taken from the `Common` instance
 
 #### `eth.sendMessage(code, payload)`
 
@@ -317,7 +322,7 @@ Normally not instantiated directly but created as a `SubProtocol` in the `Peer` 
 
 Send initial status message.
 
-- `status` - Status message to send, format `{ networkId: CHAIN_ID, headTd: TOTAL_DIFFICULTY_BUFFER, headHash: HEAD_HASH_BUFFER, headNum: HEAD_NUM_BUFFER, genesisHash: GENESIS_HASH_BUFFER }`.
+- `status` - Status message to send, format `{ headTd: TOTAL_DIFFICULTY_BUFFER, headHash: HEAD_HASH_BUFFER, headNum: HEAD_NUM_BUFFER, genesisHash: GENESIS_HASH_BUFFER }`, `networkId` (respectively `chainId`) is taken from the `Common` instance
 
 #### `les.sendMessage(code, reqId, payload)`
 

@@ -12,7 +12,7 @@ export const DEFAULT_ANNOUNCE_TYPE = 1
 
 export class LES extends EventEmitter {
   _version: any
-  _peer: any
+  _peer: Peer
   _send: any
   _status: LES.Status | null
   _peerStatus: LES.Status | null
@@ -139,7 +139,7 @@ export class LES extends EventEmitter {
     }
     status['announceType'] = int2buffer(status['announceType'] as number)
     status['protocolVersion'] = int2buffer(this._version)
-    status['networkId'] = int2buffer(status['networkId'] as number)
+    status['networkId'] = int2buffer(this._peer._common.chainId())
 
     this._status = status
 
@@ -208,7 +208,7 @@ export namespace LES {
   export interface Status {
     [key: string]: Buffer | number
     protocolVersion: Buffer
-    networkId: Buffer | number
+    // networkId: Buffer | number
     headTd: Buffer
     headHash: Buffer
     headNum: Buffer

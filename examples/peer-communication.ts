@@ -10,11 +10,10 @@ import { randomBytes } from 'crypto'
 import rlp from 'rlp-encoding'
 
 const PRIVATE_KEY = randomBytes(32)
-const CHAIN_ID = 1
 
 const Common = require('ethereumjs-common').default
-const config = new Common('mainnet')
-const bootstrapNodes = config.bootstrapNodes()
+const common = new Common('mainnet')
+const bootstrapNodes = common.bootstrapNodes()
 const BOOTNODES = bootstrapNodes.map((node: any) => {
   return {
     address: node.ip,
@@ -63,6 +62,7 @@ const rlpx = new devp2p.RLPx(PRIVATE_KEY, {
   dpt: dpt,
   maxPeers: 25,
   capabilities: [devp2p.ETH.eth63, devp2p.ETH.eth62],
+  common: common,
   remoteClientIdFilter: REMOTE_CLIENTID_FILTER,
   listenPort: null,
 })
@@ -86,7 +86,6 @@ rlpx.on('peer:added', peer => {
   )
 
   eth.sendStatus({
-    networkId: CHAIN_ID,
     td: devp2p.int2buffer(17179869184), // total difficulty in genesis block
     bestHash: Buffer.from(
       'd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3',
