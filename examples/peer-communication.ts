@@ -11,7 +11,7 @@ import rlp from 'rlp-encoding'
 
 const PRIVATE_KEY = randomBytes(32)
 
-const Common = require('ethereumjs-common').default
+const Common = require('@ethereumjs/common').default
 const common = new Common('mainnet')
 const bootstrapNodes = common.bootstrapNodes()
 const BOOTNODES = bootstrapNodes.map((node: any) => {
@@ -61,7 +61,7 @@ dpt.on('error', err => console.error(chalk.red(`DPT error: ${err}`)))
 const rlpx = new devp2p.RLPx(PRIVATE_KEY, {
   dpt: dpt,
   maxPeers: 25,
-  capabilities: [devp2p.ETH.eth63, devp2p.ETH.eth62],
+  capabilities: [devp2p.ETH.eth64],
   common: common,
   remoteClientIdFilter: REMOTE_CLIENTID_FILTER,
   listenPort: null,

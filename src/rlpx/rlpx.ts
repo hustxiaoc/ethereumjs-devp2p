@@ -5,7 +5,7 @@ import { publicKeyCreate } from 'secp256k1'
 import { EventEmitter } from 'events'
 import { debug as createDebugLogger } from 'debug'
 import LRUCache from 'lru-cache'
-import Common from 'ethereumjs-common'
+import Common from '@ethereumjs/common'
 // note: relative path only valid in .js file in dist
 const { version: pVersion } = require('../../package.json')
 import { pk2id, createDeferred, formatLogId } from '../util'

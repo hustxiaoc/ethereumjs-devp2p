@@ -17,7 +17,7 @@ const GENESIS_HASH = Buffer.from(
   'hex',
 )
 
-const Common = require('ethereumjs-common').default
+const Common = require('@ethereumjs/common').default
 const common = new Common('rinkeby')
 const bootstrapNodes = common.bootstrapNodes()
 const BOOTNODES = bootstrapNodes.map((node: any) => {
