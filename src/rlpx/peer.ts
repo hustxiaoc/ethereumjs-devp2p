@@ -530,6 +530,7 @@ export class Peer extends EventEmitter {
       } catch (err) {
         debug(`Error on peer socket data handling: ${err}`)
         this.emit('error', err)
+        break
       }
     }
   }
